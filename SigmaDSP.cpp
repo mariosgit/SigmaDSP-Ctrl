@@ -143,6 +143,52 @@ bool SigmaDSP::saveloadWrite(uint16_t address1, uint32_t value1, uint16_t addres
     return result;
 }
 
+bool SigmaDSP::saveloadWrite5(const uint16_t address, const float *values)
+{
+    bool result = true;
+
+    uint16_t coreregval = REG_COREREGISTER_IC_1_VALUE | R13_SAFELOAD_IC_1_MASK;
+    uint32_t dspval = 0; 
+
+    // data
+    beginTransmission();
+    Wire.write(0x08);        // address high byte
+    Wire.write(0x10);        // address low byte
+    for(int i = 0; i < 5; i++) 
+    {
+        dspval = floatTo523(values[i]);
+        Wire.write(0);   // bits 39-32 ???
+        Wire.write(dspval >> 24);   // address high byte
+        Wire.write(dspval >> 16); // address low byte
+        Wire.write(dspval >> 8);   // address high byte
+        Wire.write(dspval & 0xff); // address low byte
+    }
+    result &= endTransmission();
+    if(!result) return false;
+
+    // addresses
+    beginTransmission();
+    Wire.write(0x08);          // address high byte
+    Wire.write(0x15);        // address low byte
+    for(int i = 0; i < 5; i++)
+    {
+        Wire.write((address+i) >> 8);   // address high byte
+        Wire.write((address+i)     ); // address low byte
+    }
+    result &= endTransmission();
+    if(!result) return false;
+
+    beginTransmission();
+    Wire.write(REG_COREREGISTER_IC_1_ADDR >> 8);          // address high byte
+    Wire.write(REG_COREREGISTER_IC_1_ADDR);        // address low byte
+    Wire.write(coreregval >> 8);   // address high byte
+    Wire.write(coreregval); // address low byte
+    result &= endTransmission();
+
+    return result;
+}
+
+
 bool SigmaDSP::setDataCapture(uint16_t address1, uint16_t address2)
 {
     beginTransmission();

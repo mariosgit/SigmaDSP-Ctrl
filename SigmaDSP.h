@@ -12,9 +12,24 @@ class SigmaDSP {
 
     void begin();
 
+    /// @brief Wite a single value using saveload procedure
+    /// @param address - register address
+    /// @param value - DSP native binary
+    /// @return 
     bool saveloadWrite(uint16_t address, uint32_t value);
+    /// @brief Writes 2 values using saveload procedure
+    /// @param address1 - register address
+    /// @param value1 - DSP native binary
+    /// @param address2 
+    /// @param value2 
+    /// @return 
     bool saveloadWrite(uint16_t address1, uint32_t value1,
                        uint16_t address2, uint32_t value2);
+    /// @brief Converts and writes 5 values, e.g. biquad using saveload procedure
+    /// @param address - start address, e.g. b0
+    /// @param values - array of 5 floats
+    /// @return 
+    bool saveloadWrite5(const uint16_t address, const float *values);
 
     bool setDataCapture(uint16_t address1, uint16_t address2);
     bool readDataCapture(int32_t &val1, int32_t &val2);
