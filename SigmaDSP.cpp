@@ -56,29 +56,24 @@ bool SigmaDSP::saveloadWrite(uint16_t address, uint32_t value)
     // return;
 
     beginTransmission();
-    Wire.write(0x08);          // address high byte
-    Wire.write(0x10);        // address low byte
+    write16(0x0810);        // target data 0
     Wire.write(0);   // bits 39-32 ???
     Wire.write(value >> 24);   // address high byte
     Wire.write(value >> 16); // address low byte
     Wire.write(value >> 8);   // address high byte
-    Wire.write(value & 0xff); // address low byte
+    Wire.write(value); // address low byte
     result &= endTransmission();
     if(!result) return false;
 
     beginTransmission();
-    Wire.write(0x08);          // address high byte
-    Wire.write(0x15);        // address low byte
-    Wire.write(address >> 8);   // address high byte
-    Wire.write(address); // address low byte
+    write16(0x0815);        // target address 0
+    write16(address);
     result &= endTransmission();
     if(!result) return false;
 
     beginTransmission();
-    Wire.write(REG_COREREGISTER_IC_1_ADDR >> 8);          // address high byte
-    Wire.write(REG_COREREGISTER_IC_1_ADDR);        // address low byte
-    Wire.write(coreregval >> 8);   // address high byte
-    Wire.write(coreregval); // address low byte
+    write16(REG_COREREGISTER_IC_1_ADDR);
+    write16(coreregval);
     result &= endTransmission();
 
     return result;
@@ -96,8 +91,7 @@ bool SigmaDSP::saveloadWrite(uint16_t address1, uint32_t value1, uint16_t addres
     uint16_t coreregval = REG_COREREGISTER_IC_1_VALUE | R13_SAFELOAD_IC_1_MASK;
 
     beginTransmission();
-    Wire.write(0x08);          // address high byte
-    Wire.write(0x10);        // address low byte
+    write16(0x0810);        // target data 0
     Wire.write(0);   // bits 39-32 ???
     Wire.write(value1 >> 24);   // address high byte
     Wire.write(value1 >> 16); // address low byte
@@ -107,16 +101,14 @@ bool SigmaDSP::saveloadWrite(uint16_t address1, uint32_t value1, uint16_t addres
     if(!result) return false;
 
     beginTransmission();
-    Wire.write(0x08);          // address high byte
-    Wire.write(0x15);        // address low byte
+    write16(0x0815);        // target address 0
     Wire.write(address1 >> 8);   // address high byte
     Wire.write(address1); // address low byte
     result &= endTransmission();
     if(!result) return false;
 
     beginTransmission();
-    Wire.write(0x08);          // address high byte
-    Wire.write(0x11);        // address low byte
+    write16(0x0810+1);        // target data 1
     Wire.write(0);   // bits 39-32 ???
     Wire.write(value2 >> 24);   // address high byte
     Wire.write(value2 >> 16); // address low byte
@@ -126,18 +118,15 @@ bool SigmaDSP::saveloadWrite(uint16_t address1, uint32_t value1, uint16_t addres
     if(!result) return false;
 
     beginTransmission();
-    Wire.write(0x08);          // address high byte
-    Wire.write(0x16);        // address low byte
+    write16(0x0815+1);        // target address 1
     Wire.write(address2 >> 8);   // address high byte
     Wire.write(address2); // address low byte
     result &= endTransmission();
     if(!result) return false;
 
     beginTransmission();
-    Wire.write(REG_COREREGISTER_IC_1_ADDR >> 8);          // address high byte
-    Wire.write(REG_COREREGISTER_IC_1_ADDR);        // address low byte
-    Wire.write(coreregval >> 8);   // address high byte
-    Wire.write(coreregval); // address low byte
+    write16(REG_COREREGISTER_IC_1_ADDR);
+    write16(coreregval);
     result &= endTransmission();
 
     return result;
@@ -152,8 +141,7 @@ bool SigmaDSP::saveloadWrite5(const uint16_t address, const float *values)
 
     // data
     beginTransmission();
-    Wire.write(0x08);        // address high byte
-    Wire.write(0x10);        // address low byte
+    write16(0x0810);        // target data 0
     for(int i = 0; i < 5; i++) 
     {
         dspval = floatTo523(values[i]);
@@ -168,21 +156,17 @@ bool SigmaDSP::saveloadWrite5(const uint16_t address, const float *values)
 
     // addresses
     beginTransmission();
-    Wire.write(0x08);          // address high byte
-    Wire.write(0x15);        // address low byte
+    write16(0x0815);        // target addr 0
     for(int i = 0; i < 5; i++)
     {
-        Wire.write((address+i) >> 8);   // address high byte
-        Wire.write((address+i)     ); // address low byte
+        write16(address+i);
     }
     result &= endTransmission();
     if(!result) return false;
 
     beginTransmission();
-    Wire.write(REG_COREREGISTER_IC_1_ADDR >> 8);          // address high byte
-    Wire.write(REG_COREREGISTER_IC_1_ADDR);        // address low byte
-    Wire.write(coreregval >> 8);   // address high byte
-    Wire.write(coreregval); // address low byte
+    write16(REG_COREREGISTER_IC_1_ADDR);
+    write16(coreregval);
     result &= endTransmission();
 
     return result;
