@@ -19,6 +19,7 @@ SigmaDSP::SigmaDSP()
 void SigmaDSP::begin()
 {
     Wire.begin();
+    Wire.setClock(400000);
 }
 
 bool SigmaDSP::saveloadWrite(uint16_t address, uint32_t value)
